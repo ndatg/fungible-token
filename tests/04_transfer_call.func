@@ -1,0 +1,86 @@
+;; transfer_call
+[int, tuple, cell, tuple, int] transfer_call_data() method_id(20) {
+  int function_selector = 0;
+  cell data = new_data();
+
+  slice sender = address(-1, 0x1111111111111111111111111111111111111111111111111111111111111111);
+  slice receiver = address(-1, 0x2222222222222222222222222222222222222222222222222222222222222222);
+  slice token_contract = address(-1, 0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA);
+  int amount = 2000000000; ;; 2 MTKN
+
+  int msg_value = 1000000000;
+  cell in_msg_cell = build_message(0, sender, token_contract, msg_value, begin_cell());
+  slice in_msg = begin_cell()
+    .store_uint(op::transfer_call(), 32) ;; op
+    .store_uint(0, 64) ;; query_id
+    .store_slice(receiver) ;; receiver
+    .store_uint(amount, 256) ;; amount
+    .store_ref(begin_cell().end_cell()) ;; test payload
+    .end_cell()
+    .begin_parse();
+
+  tuple stack = unsafe_tuple([(msg_value, in_msg_cell, in_msg)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ transfer_call(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(21) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+}
+
+;; sender balance after transfer_call
+[int, tuple, cell, tuple, int] sender_balance_of_after_transfer_call_data() method_id(22) {
+  int function_selector = 112966;
+  cell data = get_prev_c4();
+
+  slice account = address(-1, 0x1111111111111111111111111111111111111111111111111111111111111111);
+
+  tuple stack = unsafe_tuple([(account)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ sender_balance_of_after_transfer_call(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(23) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+  int balance = first(stack);
+  throw_if(error::balance_of_not_equal(), balance != 8000000000);
+}
+
+;; receiver balance after transfer_call
+[int, tuple, cell, tuple, int] receiver_balance_of_after_transfer_call_data() method_id(24) {
+  int function_selector = 112966;
+  cell data = get_prev_c4();
+
+  slice account = address(-1, 0x2222222222222222222222222222222222222222222222222222222222222222);
+
+  tuple stack = unsafe_tuple([(account)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ receiver_balance_of_after_transfer_call(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(25) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+  int balance = first(stack);
+  throw_if(error::balance_of_not_equal(), balance != 2000000000);
+}
+
+;; callback after transfer_call
+[int, tuple, cell, tuple, int] callback_after_transfer_call_data() method_id(26) {
+  int function_selector = 70639;
+  cell data = get_prev_c4();
+
+  int callback_id = 0;
+
+  tuple stack = unsafe_tuple([(callback_id)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ callback_after_transfer_call(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(27) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+  int sender_addr = first(stack);
+  int receiver_addr = second(stack);
+  throw_if(error::callback_not_equal(), sender_addr != 0x1111111111111111111111111111111111111111111111111111111111111111);
+  throw_if(error::callback_not_equal(), receiver_addr != 0x2222222222222222222222222222222222222222222222222222222222222222);
+}
+

@@ -1,0 +1,112 @@
+;; resolve_transfer with incorrect callback
+[int, tuple, cell, tuple, int] resolve_transfer_with_incorrect_callback_data() method_id(28) {
+  int function_selector = 0;
+  cell data = get_prev_c4();
+
+  slice sender = address(-1, 0x1111111111111111111111111111111111111111111111111111111111111111);
+  slice receiver = address(-1, 0x4444444444444444444444444444444444444444444444444444444444444444);
+  slice token_contract = address(-1, 0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA);
+  int amount = 1000000000; ;; 1 MTKN
+
+  int msg_value = 1000000000;
+  cell in_msg_cell = build_message(0, receiver, token_contract, msg_value, begin_cell());
+  slice in_msg = begin_cell()
+    .store_uint(op::resolve_transfer(), 32) ;; op
+    .store_uint(0, 64) ;; callback_id
+    .store_uint(amount, 256) ;; unused_amount
+    .end_cell()
+    .begin_parse();
+
+  tuple stack = unsafe_tuple([(msg_value, in_msg_cell, in_msg)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ resolve_transfer_with_incorrect_callback(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(29) {
+  int status_code = first(stack);
+  throw_if(error::exit_code_not_success(), status_code != op::resolve_transfer_with_incorrect_callback());
+}
+
+;; resolve_transfer
+[int, tuple, cell, tuple, int] resolve_transfer_data() method_id(30) {
+  int function_selector = 0;
+  cell data = get_prev_c4();
+
+  slice sender = address(-1, 0x1111111111111111111111111111111111111111111111111111111111111111);
+  slice receiver = address(-1, 0x2222222222222222222222222222222222222222222222222222222222222222);
+  slice token_contract = address(-1, 0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA);
+  int amount = 1000000000; ;; 1 MTKN
+
+  int msg_value = 1000000000;
+  cell in_msg_cell = build_message(0, receiver, token_contract, msg_value, begin_cell());
+  slice in_msg = begin_cell()
+    .store_uint(op::resolve_transfer(), 32) ;; op
+    .store_uint(0, 64) ;; callback_id
+    .store_uint(amount, 256) ;; unused_amount
+    .end_cell()
+    .begin_parse();
+
+  tuple stack = unsafe_tuple([(msg_value, in_msg_cell, in_msg)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ resolve_transfer(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(31) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+}
+
+;; sender balance after transfer_call
+[int, tuple, cell, tuple, int] sender_balance_of_after_resolve_transfer_data() method_id(32) {
+  int function_selector = 112966;
+  cell data = get_prev_c4();
+
+  slice account = address(-1, 0x1111111111111111111111111111111111111111111111111111111111111111);
+
+  tuple stack = unsafe_tuple([(account)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ sender_balance_of_after_resolve_transfer(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(33) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+  int balance = first(stack);
+  throw_if(error::balance_of_not_equal(), balance != 9000000000);
+}
+
+;; receiver balance after transfer_call
+[int, tuple, cell, tuple, int] receiver_balance_of_after_resolve_transfer_data() method_id(34) {
+  int function_selector = 112966;
+  cell data = get_prev_c4();
+
+  slice account = address(-1, 0x2222222222222222222222222222222222222222222222222222222222222222);
+
+  tuple stack = unsafe_tuple([(account)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ receiver_balance_of_after_resolve_transfer(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(35) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+  int balance = first(stack);
+  throw_if(error::balance_of_not_equal(), balance != 1000000000);
+}
+
+;; callback after resolve_transfer
+[int, tuple, cell, tuple, int] callback_after_resolve_transfer_data() method_id(36) {
+  int function_selector = 70639;
+  cell data = get_prev_c4();
+
+  int callback_id = 0;
+
+  tuple stack = unsafe_tuple([(callback_id)]);
+
+  return [function_selector, stack, data, get_c7(), null()];
+}
+
+_ callback_after_resolve_transfer(int exit_code, cell data, tuple stack, cell actions, int gas) method_id(37) {
+  throw_if(error::exit_code_not_success(), exit_code != 0);
+  int sender = first(stack);
+  int receiver = second(stack);
+  throw_if(error::callback_not_equal(), sender != 0);
+  throw_if(error::callback_not_equal(), receiver != 0);
+}

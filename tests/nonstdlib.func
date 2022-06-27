@@ -1,0 +1,2 @@
+builder store_builder(builder to, builder from) asm "STBR";
+forall X -> X fifth(tuple t) asm "4 INDEX";

@@ -1,0 +1,30 @@
+cell new_data() method_id {
+  cell balances = new_dict();
+  cell callbacks = new_dict();
+  int total_supply = 10000000000; ;; 10 MTKN
+  int owner_addr = 0x1111111111111111111111111111111111111111111111111111111111111111;
+  cell name = begin_cell().store_uint(0x4d7920546f6b656e, 64).end_cell(); ;; My Token
+  cell symbol = begin_cell().store_uint(0x4d544b4e, 32).end_cell(); ;; MTKN
+  int decimals = 9;
+  cell icon = begin_cell().store_uint(0x2e2f69636f6e2e737667, 80).end_cell(); ;; ./icon.svg
+  cell spec = begin_cell().store_uint(0x76312e302e30, 48).end_cell(); ;; v1.0.0
+
+  ;;  mint 10 MTKN
+  balances~udict_set_builder(256, owner_addr, begin_cell().store_uint(10000000000, 256));
+
+  cell data = begin_cell()
+    .store_dict(balances)
+    .store_dict(callbacks)
+    .store_uint(total_supply, 256)
+    .store_uint(owner_addr, 256)
+    .store_ref(begin_cell()
+      .store_ref(name)
+      .store_ref(symbol)
+      .store_uint(decimals, 8)
+      .store_ref(icon)
+      .store_ref(spec)
+    .end_cell())
+  .end_cell();
+
+  return data;
+}

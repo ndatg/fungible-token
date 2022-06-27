@@ -1,0 +1,18 @@
+contract:
+  func:
+    - func/utils.func
+    - func/op.func
+    - func/data.func
+    - func/fungible_token.func
+  tests:
+    - tests/nonstdlib.func
+    - tests/utils.func
+    - func/op.func
+    - tests/op.func
+    - tests/01_data.func
+    - tests/02_methods.func
+    - tests/03_transfer.func
+    - tests/04_transfer_call.func
+    - tests/05_resolve_transfer.func
+    - tests/06_mint.func
+    - tests/07_burn.func
