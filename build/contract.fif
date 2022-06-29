@@ -166,11 +166,11 @@ PROGRAM{
     load_data CALLDICT	//  id _29 _30 _31 _32 _33
     s3 s4 XCHG
     4 BLKDROP	//  id callbacks
-    0 PUSHINT	//  id callbacks _9=0
-    DUP	//  id callbacks _9=0 _10=0
+    -1 PUSHINT	//  id callbacks _9=-1
+    0 PUSHINT	//  id callbacks _9=-1 _10=0
     address INLINECALLDICT	//  id callbacks sender
-    0 PUSHINT	//  id callbacks sender _13=0
-    DUP	//  id callbacks sender _13=0 _14=0
+    -1 PUSHINT	//  id callbacks sender _13=-1
+    0 PUSHINT	//  id callbacks sender _13=-1 _14=0
     address INLINECALLDICT	//  id callbacks sender receiver
     0 PUSHINT	//  id callbacks sender receiver amount=0
     s4 s3 XCHG2

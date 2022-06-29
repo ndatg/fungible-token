@@ -61,8 +61,8 @@ int _get_balance(slice account) inline_ref {
 (slice, slice, int) _get_callback(int id) inline_ref {
   (cell balances, cell callbacks, int total_supply, int owner_addr, cell metadata) = load_data(get_data());
 
-  slice sender = address(0, 0);
-  slice receiver = address(0, 0);
+  slice sender = address(-1, 0);
+  slice receiver = address(-1, 0);
   int amount = 0;
 
   (slice callback_slice, int callback_found) = callbacks.udict_get?(64, id);
